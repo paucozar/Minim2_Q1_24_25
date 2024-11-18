@@ -16,4 +16,8 @@ public interface ApiService {
 
     @POST("users/login")
     Call<Void> loginUser(@Body User user);
+
+    @GET("store")
+    Call<List<Item>> getItems();
+
 }

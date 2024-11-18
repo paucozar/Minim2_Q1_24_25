@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ItemDetailActivity">
+
+    <TextView
+        android:id="@+id/item_nombre"
+        android:layout_width="374dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="12dp"
+        android:text="Nombre del Item"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_descripcion"
+        android:layout_width="379dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="176dp"
+        android:text="Descripcion del Item"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_nombre" />
+
+    <TextView
+        android:id="@+id/item_precio"
+        android:layout_width="377dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="120dp"
+        android:text="Precio del Item"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_descripcion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="476dp"
+        android:text="Back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_precio" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
