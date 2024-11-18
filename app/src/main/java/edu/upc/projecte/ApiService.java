@@ -11,8 +11,8 @@ import java.util.List;
 
 
 public interface ApiService {
-    @POST("users/register")
-    Call<Void> addUser(@Body User user);
+    @POST("users")
+    Call<Void> registerUser(@Body User user);
 
     @POST("users/login")
     Call<Void> loginUser(@Body User user);
