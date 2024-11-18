@@ -24,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText usernameRegText;
     private EditText passwordRegText;
     private Button registerButton;
+    private Button cancelButton;
     private ApiService apiService;
 
 
@@ -40,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         usernameRegText = findViewById(R.id.usernameText);
         passwordRegText = findViewById(R.id.passwordText);
         registerButton = findViewById(R.id.registerButton);
+        cancelButton = findViewById(R.id.cancelButton);
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
         registerButton.setOnClickListener(v -> {
@@ -55,6 +57,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             User user = new User(username, password);
             registerUser(user);
+        });
+
+        cancelButton.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+            startActivity(intent);
         });
 
     }
