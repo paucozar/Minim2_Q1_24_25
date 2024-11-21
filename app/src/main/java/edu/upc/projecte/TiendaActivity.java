@@ -49,8 +49,9 @@ public class TiendaActivity extends AppCompatActivity {
 
         Button buttonBack = findViewById(R.id.button_back);
         buttonBack.setOnClickListener(v -> finish());
-    }
 
+
+    }
 
     private void verTienda() {
         Call<List<Item>> call = apiService.getItems();
