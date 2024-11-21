@@ -37,12 +37,11 @@ public class TiendaActivity extends AppCompatActivity {
         apiService = RetrofitClient.getClient().create(ApiService.class);
         verTienda();
 
-
-
         Button buttonBack = findViewById(R.id.button_back);
         buttonBack.setOnClickListener(v -> finish());
-    }
 
+
+    }
 
     private void verTienda() {
         Call<List<Item>> call = apiService.getItems();
