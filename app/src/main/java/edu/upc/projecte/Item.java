@@ -2,6 +2,7 @@ package edu.upc.projecte;
 
 import java.io.Serializable;
 
+//prova compatibilitat amb mac
 public class Item implements Comparable<Item> {
     private String id;
     private String name;
