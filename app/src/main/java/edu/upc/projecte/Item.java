@@ -2,50 +2,55 @@ package edu.upc.projecte;
 
 import java.io.Serializable;
 
-public class Item implements Serializable {
-    private String idItem;
-    private String nombre;
-    private String descripcion;
-    private double precio;
+public class Item implements Comparable<Item> {
+    private String id;
+    private String name;
+    private String description;
+    private double price;
 
+    public Item() {}
 
-    public Item(String idItem,String nombre, String descripcion, double precio) {
-        this.idItem = idItem;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.descripcion = descripcion;
+    public Item(String id, String name, String description, double price) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
     }
 
-    public String getIdItem() {
-        return idItem;
+    public String getId() {
+        return id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public double getPrecio() {
-        return precio;
+    public String getName() {
+        return name;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setIdItem(String idItem) {
-        this.idItem = idItem;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
+    public double getPrice() {
+        return price;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
+    @Override
+    public int compareTo(Item other) {
+        return this.name.compareTo(other.name);
+    }
 }

@@ -1,9 +1,14 @@
 package edu.upc.projecte;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.content.Context;
+import android.content.Intent;
+
+
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,42 +17,45 @@ import java.util.List;
 
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
     private List<Item> itemList;
-    private OnItemClickListener listener;
+    private Context context;
+    private ApiService apiService;
 
-    public ItemAdapter(List<Item> itemList, OnItemClickListener listener) {
+    public ItemAdapter(List<Item> itemList, ApiService apiService, Context context) {
         this.itemList = itemList;
-        this.listener = listener;
+        this.context = context;
+        this.apiService = apiService;
     }
 
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_item_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.activity_item_layout, parent, false);
         return new ItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ItemViewHolder holder, int pos) {
+        int position = holder.getAdapterPosition();
         Item item = itemList.get(position);
-        holder.itemNombre.setText(item.getNombre());
+        holder.itemNombre.setText(item.getName());
 //      holder.itemDescripcion.setText(item.getDescripcion());
-        holder.itemPrecio.setText(String.valueOf(item.getPrecio()));
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(item, position));
+        holder.itemPrecio.setText(String.valueOf(item.getPrice()));
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ItemDetailActivity.class);
+            intent.putExtra("name", item.getName());
+            intent.putExtra("description", item.getDescription());
+            intent.putExtra("price", item.getPrice());
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
         return itemList.size();
     }
-    public List<Item> getItems() {
-        return itemList;
-        }
 
-
-    public void setData(List<Item> myDataset) {
-        itemList = myDataset;
-        notifyDataSetChanged();
-    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView itemNombre, itemPrecio;
@@ -60,7 +68,4 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         }
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(Item item, int position);
-    }
 }

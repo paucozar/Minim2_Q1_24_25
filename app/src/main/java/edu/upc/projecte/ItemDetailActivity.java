@@ -16,9 +16,9 @@ public class ItemDetailActivity extends AppCompatActivity {
         TextView itemDescripcion = findViewById(R.id.item_descripcion);
         TextView itemPrecio = findViewById(R.id.item_precio);
 
-        String nombre = getIntent().getStringExtra("Nombre item");
-        String descripcion = getIntent().getStringExtra("Descripción item");
-        double precio = getIntent().getDoubleExtra("Precio item", 0);
+        String nombre = getIntent().getStringExtra("name");
+        String descripcion = getIntent().getStringExtra("description");
+        double precio = getIntent().getDoubleExtra("price", 0);
 
         itemNombre.setText(nombre);
         itemDescripcion.setText(descripcion);

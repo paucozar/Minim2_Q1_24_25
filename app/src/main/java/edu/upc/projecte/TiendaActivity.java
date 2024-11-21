@@ -26,18 +26,26 @@ public class TiendaActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ItemAdapter itemAdapter;
     private ApiService apiService;
+    private List<Item> itemList = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tienda);
-
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         apiService = RetrofitClient.getClient().create(ApiService.class);
+
+        itemAdapter = new ItemAdapter(itemList, apiService, this);
+        recyclerView.setAdapter(itemAdapter);
         verTienda();
-
-
 
         Button buttonBack = findViewById(R.id.button_back);
         buttonBack.setOnClickListener(v -> finish());
@@ -50,30 +58,19 @@ public class TiendaActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 if (response.isSuccessful()) {
-                    List<Item> items = new ArrayList<>(response.body());
-
-                    itemAdapter = new ItemAdapter(items, (item, position) -> {
-                        Intent intent = new Intent(TiendaActivity.this, ItemDetailActivity.class);
-                        intent.putExtra("Nombre item", item.getNombre());
-                        intent.putExtra("Descripción item", item.getDescripcion());
-                        intent.putExtra("Precio item", item.getPrecio());
-                        startActivity(intent);
-                    });
-                    items = itemAdapter.getItems();
-                    recyclerView.setAdapter(itemAdapter);
+                    itemList.clear();
+                    itemList.addAll(response.body());
+                    itemAdapter.notifyDataSetChanged();
+                    Toast.makeText(TiendaActivity.this, "Items loaded", Toast.LENGTH_SHORT).show();
                 } else {
-                    String errorMessage = "Failed to load items: ";
-                    if (!response.isSuccessful()) {
-                        errorMessage += "HTTP error code " + response.code();
-                    }
-                    Log.e("API_ERROR", errorMessage);
-                    Toast.makeText(TiendaActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    Log.e("API_ERROR", "Error: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Item>> call, Throwable t) {
-                Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("API_ERROR", "Failed to fetch items", t);
+                Toast.makeText(TiendaActivity.this, "Failed to fetch items", Toast.LENGTH_SHORT).show();
             }
         });
     }

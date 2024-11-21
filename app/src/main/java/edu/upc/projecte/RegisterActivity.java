@@ -53,8 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(this, "Registre en curs...", Toast.LENGTH_SHORT).show();
-
             User user = new User(username, password);
             registerUser(user);
         });

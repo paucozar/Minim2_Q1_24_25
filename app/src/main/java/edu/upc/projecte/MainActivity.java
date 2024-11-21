@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Inici de sessió correcte!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                     startActivity(intent);
                     // Navegar a una altra activitat si cal
