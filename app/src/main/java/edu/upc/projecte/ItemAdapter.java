@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,16 +16,12 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder> {
 
     private List<Item> itemList;
+    private OnItemClickListener onItemClickListener;
     private Context context;
-    private AddToCartListener addToCartListener;
 
-    public interface AddToCartListener {
-        void onAddToCart(Item item);
-    }
-
-    public ItemAdapter(List<Item> itemList, AddToCartListener addToCartListener, Context context) {
+    public ItemAdapter(List<Item> itemList, OnItemClickListener onItemClickListener, Context context) {
         this.itemList = itemList;
-        this.addToCartListener = addToCartListener;
+        this.onItemClickListener = onItemClickListener;
         this.context = context;
     }
 
@@ -38,10 +35,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         Item item = itemList.get(position);
-        holder.itemNombre.setText(item.getName());
-        holder.itemPrecio.setText(String.valueOf(item.getPrice()));
+        holder.itemName.setText(item.getName());
+        holder.itemPrice.setText("Price: $" + item.getPrice());
+        holder.itemStock.setText("Stock: " + item.getStock());
 
-        holder.buttonAddToCart.setOnClickListener(v -> addToCartListener.onAddToCart(item));
+        holder.addToCartButton.setOnClickListener(v -> {
+            if (item.getStock() > 0) {
+                item.decrementStock();
+                holder.itemStock.setText("Stock: " + item.getStock());
+                onItemClickListener.onItemClick(item);
+            } else {
+                Toast.makeText(context, "Item out of stock!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -50,14 +56,19 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView itemNombre, itemPrecio;
-        Button buttonAddToCart;
+        TextView itemName, itemPrice, itemStock;
+        Button addToCartButton;
 
-        public ItemViewHolder(View itemView) {
+        public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            itemNombre = itemView.findViewById(R.id.item_nombre);
-            itemPrecio = itemView.findViewById(R.id.item_precio);
-            buttonAddToCart = itemView.findViewById(R.id.button_add_to_cart);
+            itemName = itemView.findViewById(R.id.item_name);
+            itemPrice = itemView.findViewById(R.id.item_price);
+            itemStock = itemView.findViewById(R.id.item_stock);
+            addToCartButton = itemView.findViewById(R.id.add_to_cart_button);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Item item);
     }
 }

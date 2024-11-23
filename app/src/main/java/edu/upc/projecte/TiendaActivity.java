@@ -1,10 +1,10 @@
-
 package edu.upc.projecte;
 
-import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Button;
 import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,16 +37,22 @@ public class TiendaActivity extends AppCompatActivity {
 
         List<Item> itemList = new ArrayList<>();
         // Add items to the list
-        itemList.add(new Item("1", "Item 1", "Description 1", 10.0));
-        itemList.add(new Item("2", "Item 2", "Description 2", 20.0));
-        itemList.add(new Item("3", "Item 3", "Description 3", 30.0));
+        itemList.add(new Item("1", "Item 1", "Description 1", 10.0, 5));
+        itemList.add(new Item("2", "Item 2", "Description 2", 20.0, 3));
+        itemList.add(new Item("3", "Item 3", "Description 3", 30.0, 2));
 
         ItemAdapter adapter = new ItemAdapter(itemList, this::addToCart, this);
         recyclerView.setAdapter(adapter);
     }
 
     private void addToCart(Item item) {
-        cartItemCount++;
-        cartCounter.setText("🛍️ " + cartItemCount);
+        if (item.getStock() > 0) {
+            item.decrementStock();
+            cartItemCount++;
+            cartCounter.setText("🛍️ " + cartItemCount);
+            Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Item out of stock", Toast.LENGTH_SHORT).show();
+        }
     }
 }
