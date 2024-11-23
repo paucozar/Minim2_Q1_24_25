@@ -19,4 +19,10 @@
         android:layout_height="wrap_content"
         android:text="Precio del Item"
         android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/button_add_to_cart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Añadir a la cesta" />
 </LinearLayout>

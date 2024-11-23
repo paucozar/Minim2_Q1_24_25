@@ -1,78 +1,52 @@
+
 package edu.upc.projecte;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.TextView;
 import android.widget.Button;
-import android.widget.Toast;
+import android.content.Intent;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class TiendaActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private ItemAdapter itemAdapter;
-    private ApiService apiService;
-    private List<Item> itemList = new ArrayList<>();
-
+    private TextView cartCounter;
+    private int cartItemCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tienda);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        cartCounter = findViewById(R.id.cart_counter);
+        Button buttonLogout = findViewById(R.id.button_logout);
+
+        buttonLogout.setOnClickListener(v -> {
+            Intent intent = new Intent(TiendaActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         });
-        recyclerView = findViewById(R.id.recycler_view);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        apiService = RetrofitClient.getClient().create(ApiService.class);
 
-        itemAdapter = new ItemAdapter(itemList, apiService, this);
-        recyclerView.setAdapter(itemAdapter);
-        verTienda();
+        List<Item> itemList = new ArrayList<>();
+        // Add items to the list
+        itemList.add(new Item("1", "Item 1", "Description 1", 10.0));
+        itemList.add(new Item("2", "Item 2", "Description 2", 20.0));
+        itemList.add(new Item("3", "Item 3", "Description 3", 30.0));
 
-        Button buttonBack = findViewById(R.id.button_back);
-        buttonBack.setOnClickListener(v -> finish());
-
-
+        ItemAdapter adapter = new ItemAdapter(itemList, this::addToCart, this);
+        recyclerView.setAdapter(adapter);
     }
 
-    private void verTienda() {
-        Call<List<Item>> call = apiService.getItems();
-        call.enqueue(new Callback<List<Item>>() {
-            @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                if (response.isSuccessful()) {
-                    itemList.clear();
-                    itemList.addAll(response.body());
-                    itemAdapter.notifyDataSetChanged();
-                    Toast.makeText(TiendaActivity.this, "Items loaded", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.e("API_ERROR", "Error: " + response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Item>> call, Throwable t) {
-                Log.e("API_ERROR", "Failed to fetch items", t);
-                Toast.makeText(TiendaActivity.this, "Failed to fetch items", Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void addToCart(Item item) {
+        cartItemCount++;
+        cartCounter.setText("🛍️ " + cartItemCount);
     }
 }
