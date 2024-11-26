@@ -37,12 +37,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Item item = itemList.get(position);
         holder.itemName.setText(item.getName());
         holder.itemPrice.setText("Price: $" + item.getPrice());
-        holder.itemStock.setText("Stock: " + item.getStock());
 
         holder.addToCartButton.setOnClickListener(v -> {
             if (item.getStock() > 0) {
                 item.decrementStock();
-                holder.itemStock.setText("Stock: " + item.getStock());
                 onItemClickListener.onItemClick(item);
             } else {
                 Toast.makeText(context, "Item out of stock!", Toast.LENGTH_SHORT).show();
@@ -56,15 +54,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
-        TextView itemName, itemPrice, itemStock;
+        TextView itemName, itemPrice;
         Button addToCartButton;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.item_name);
             itemPrice = itemView.findViewById(R.id.item_price);
-            itemStock = itemView.findViewById(R.id.item_stock);
-            addToCartButton = itemView.findViewById(R.id.add_to_cart_button);
+            addToCartButton = itemView.findViewById(R.id.button_add_to_cart);
         }
     }
 

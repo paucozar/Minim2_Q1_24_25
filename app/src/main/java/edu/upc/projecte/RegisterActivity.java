@@ -1,8 +1,9 @@
 package edu.upc.projecte;
 
-import android.os.Bundle;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.view.View;
 import android.util.Log;
@@ -26,7 +27,6 @@ public class RegisterActivity extends AppCompatActivity {
     private Button registerButton;
     private Button cancelButton;
     private ApiService apiService;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +61,6 @@ public class RegisterActivity extends AppCompatActivity {
             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             startActivity(intent);
         });
-
     }
 
     private void registerUser(User user) {
@@ -71,7 +70,11 @@ public class RegisterActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(RegisterActivity.this, "Registre correcte!", Toast.LENGTH_SHORT).show();
-                    // Navegar a una altra activitat si cal
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish(); // Cierra la actividad de registro para que no se pueda volver con el botón de atrás
+                    }, 1000); // Espera 1 segundos
                 } else {
                     Toast.makeText(RegisterActivity.this, "Error de registre " + response.code(), Toast.LENGTH_SHORT).show();
                 }
