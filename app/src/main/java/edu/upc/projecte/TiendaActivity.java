@@ -36,10 +36,10 @@ public class TiendaActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Item> itemList = new ArrayList<>();
-        // Add items to the list
-        itemList.add(new Item("1", "Item 1", "Description 1", 10.0, 5));
-        itemList.add(new Item("2", "Item 2", "Description 2", 20.0, 3));
-        itemList.add(new Item("3", "Item 3", "Description 3", 30.0, 2));
+        // Add items to the list with different images
+        itemList.add(new Item("1", "Item 1", "Description 1", 10.0, 5, R.drawable.florfuego));
+        itemList.add(new Item("2", "Item 2", "Description 2", 20.0, 3, R.drawable.champi));
+        itemList.add(new Item("3", "Item 3", "Description 3", 30.0, 2, R.drawable.coin));
 
         ItemAdapter adapter = new ItemAdapter(itemList, this::addToCart, this);
         recyclerView.setAdapter(adapter);

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Projecte</string>
+    <!-- Add this line -->
+    <string name="item_image">Item Image</string>
 </resources>

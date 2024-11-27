@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Item item = itemList.get(position);
         holder.itemName.setText(item.getName());
         holder.itemPrice.setText("Price: $" + item.getPrice());
+        // Set the image resource for the item
+        holder.itemImage.setImageResource(item.getImageResId());// Set the image resource
+
 
         holder.addToCartButton.setOnClickListener(v -> {
             if (item.getStock() > 0) {
@@ -53,14 +57,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return itemList.size();
     }
 
+
+
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, itemPrice;
+        ImageView itemImage;
         Button addToCartButton;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.item_name);
             itemPrice = itemView.findViewById(R.id.item_price);
+            itemImage = itemView.findViewById(R.id.item_image);
             addToCartButton = itemView.findViewById(R.id.button_add_to_cart);
         }
     }

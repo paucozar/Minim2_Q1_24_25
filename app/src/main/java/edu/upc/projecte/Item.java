@@ -9,15 +9,17 @@ public class Item implements Comparable<Item> {
     private String description;
     private double price;
     private int stock;
+    private int imageResId;
 
     public Item() {}
 
-    public Item(String id, String name, String description, double price, int stock) {
+    public Item(String id, String name, String description, double price, int stock, int imageResId) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
+        this.imageResId = imageResId;
     }
 
     public String getId() {
@@ -57,6 +59,10 @@ public class Item implements Comparable<Item> {
             stock--;
         }
     }
+    public int getImageResId() {
+        return imageResId;
+    }
+
 
     public void setPrice(double price) {
         this.price = price;
