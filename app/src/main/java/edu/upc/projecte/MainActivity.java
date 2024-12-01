@@ -1,10 +1,12 @@
 package edu.upc.projecte;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.view.View;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ApiService apiService;
     private EditText usernameEditText;
     private EditText passwordEditText;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +44,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        if(isUserLoggedIn()) {
+            Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+            startActivity(intent);
+            return;
+        }
+
         login_button = findViewById(R.id.loginButton);
         register_button = findViewById(R.id.registerButton);
         usernameEditText = findViewById(R.id.usernameText);
         passwordEditText = findViewById(R.id.passwordText);
+        progressBar = findViewById(R.id.progressBar);
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
 
@@ -74,11 +84,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loginUser(User user) {
+        progressBar.setVisibility(View.VISIBLE);
+
         Call<Void> call = apiService.loginUser(user);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                progressBar.setVisibility(View.GONE);
+
                 if (response.isSuccessful()) {
+                    saveUserLoggedIn();
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                     startActivity(intent);
                     // Navegar a una altra activitat si cal
@@ -89,10 +104,23 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.e("API", "Error de connexió", t);
             }
         });
+    }
+
+    private void saveUserLoggedIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isLoggedIn", true);
+        editor.apply();
+    }
+
+    private boolean isUserLoggedIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("isLoggedIn", false);
     }
 
 
