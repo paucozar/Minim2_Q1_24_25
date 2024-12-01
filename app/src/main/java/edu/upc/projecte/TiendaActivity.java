@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.view.View;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +28,8 @@ public class TiendaActivity extends AppCompatActivity {
     private int cartItemCount = 0;
     private int coinCount = 0;
     private ApiService apiService;
+    private ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,7 @@ public class TiendaActivity extends AppCompatActivity {
 
         cartCounter = findViewById(R.id.cart_counter);
         coinCounter = findViewById(R.id.coin_counter);
+        progressBar = findViewById(R.id.progressBar);
         Button buttonLogout = findViewById(R.id.button_logout);
 
         buttonLogout.setOnClickListener(v -> {
@@ -44,18 +50,14 @@ public class TiendaActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.example.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        apiService = retrofit.create(ApiService.class);
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         fetchItems();
         fetchUserCoins("user_id"); // Reemplaza "user_id" con el ID del usuario actual
     }
 
     private void fetchItems() {
+        progressBar.setVisibility(View.VISIBLE);
         apiService.getItems().enqueue(new Callback<List<Item>>() {
             @Override
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
@@ -64,13 +66,17 @@ public class TiendaActivity extends AppCompatActivity {
                     ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this::addToCart, TiendaActivity.this);
                     RecyclerView recyclerView = findViewById(R.id.recycler_view);
                     recyclerView.setAdapter(adapter);
+                    progressBar.setVisibility(View.GONE);
+
                 } else {
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Item>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
