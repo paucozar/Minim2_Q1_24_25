@@ -2,13 +2,10 @@ package edu.upc.projecte;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import java.util.List;
-
 
 public interface ApiService {
     @POST("users")
@@ -20,5 +17,6 @@ public interface ApiService {
     @GET("store")
     Call<List<Item>> getItems();
 
-
+    @GET("user/{id}/coins")
+    Call<Integer> getUserCoins(@Path("id") String userId);
 }

@@ -38,17 +38,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Item item = itemList.get(position);
         holder.itemName.setText(item.getName());
         holder.itemPrice.setText("Price: $" + item.getPrice());
-        // Set the image resource for the item
-        holder.itemImage.setImageResource(item.getImageResId());// Set the image resource
-
+        holder.itemImage.setImageResource(item.getImageResId());
 
         holder.addToCartButton.setOnClickListener(v -> {
-            if (item.getStock() > 0) {
-                item.decrementStock();
-                onItemClickListener.onItemClick(item);
-            } else {
-                Toast.makeText(context, "Item out of stock!", Toast.LENGTH_SHORT).show();
-            }
+            onItemClickListener.onItemClick(item);
+            Toast.makeText(context, "Item added to cart", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -56,8 +50,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public int getItemCount() {
         return itemList.size();
     }
-
-
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView itemName, itemPrice;

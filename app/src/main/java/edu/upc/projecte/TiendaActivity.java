@@ -10,13 +10,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TiendaActivity extends AppCompatActivity {
 
     private TextView cartCounter;
+    private TextView coinCounter;
     private int cartItemCount = 0;
+    private int coinCount = 0;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +32,7 @@ public class TiendaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tienda);
 
         cartCounter = findViewById(R.id.cart_counter);
+        coinCounter = findViewById(R.id.coin_counter);
         Button buttonLogout = findViewById(R.id.button_logout);
 
         buttonLogout.setOnClickListener(v -> {
@@ -35,24 +44,60 @@ public class TiendaActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<Item> itemList = new ArrayList<>();
-        // Add items to the list with different images
-        itemList.add(new Item("1", "Item 1", "Description 1", 10.0, 5, R.drawable.florfuego));
-        itemList.add(new Item("2", "Item 2", "Description 2", 20.0, 3, R.drawable.champi));
-        itemList.add(new Item("3", "Item 3", "Description 3", 30.0, 2, R.drawable.coin));
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.example.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        ItemAdapter adapter = new ItemAdapter(itemList, this::addToCart, this);
-        recyclerView.setAdapter(adapter);
+        apiService = retrofit.create(ApiService.class);
+
+        fetchItems();
+        fetchUserCoins("user_id"); // Reemplaza "user_id" con el ID del usuario actual
+    }
+
+    private void fetchItems() {
+        apiService.getItems().enqueue(new Callback<List<Item>>() {
+            @Override
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Item> itemList = response.body();
+                    ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this::addToCart, TiendaActivity.this);
+                    RecyclerView recyclerView = findViewById(R.id.recycler_view);
+                    recyclerView.setAdapter(adapter);
+                } else {
+                    Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Item>> call, Throwable t) {
+                Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchUserCoins(String userId) {
+        apiService.getUserCoins(userId).enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    coinCount = response.body();
+                    coinCounter.setText("Coins: " + coinCount);
+                } else {
+                    Toast.makeText(TiendaActivity.this, "Failed to load coins", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void addToCart(Item item) {
-        if (item.getStock() > 0) {
-            item.decrementStock();
-            cartItemCount++;
-            cartCounter.setText("🛍️ " + cartItemCount);
-            Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Item out of stock", Toast.LENGTH_SHORT).show();
-        }
+        cartItemCount++;
+        cartCounter.setText("🛍️ " + cartItemCount);
+        Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
     }
 }
