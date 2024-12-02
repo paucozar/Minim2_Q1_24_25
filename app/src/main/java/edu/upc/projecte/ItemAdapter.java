@@ -18,11 +18,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     private List<Item> itemList;
     private OnItemClickListener onItemClickListener;
+    private OnDescriptionClickListener onDescriptionClickListener;
     private Context context;
 
-    public ItemAdapter(List<Item> itemList, OnItemClickListener onItemClickListener, Context context) {
+    public ItemAdapter(List<Item> itemList, OnItemClickListener onItemClickListener, OnDescriptionClickListener onDescriptionClickListener, Context context) {
         this.itemList = itemList;
         this.onItemClickListener = onItemClickListener;
+        this.onDescriptionClickListener = onDescriptionClickListener;
         this.context = context;
     }
 
@@ -44,6 +46,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             onItemClickListener.onItemClick(item);
             Toast.makeText(context, "Item added to cart", Toast.LENGTH_SHORT).show();
         });
+
+        holder.itemView.setOnClickListener(v -> onDescriptionClickListener.onDescriptionClick(item));
     }
 
     @Override
@@ -67,5 +71,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     public interface OnItemClickListener {
         void onItemClick(Item item);
+    }
+
+    public interface OnDescriptionClickListener {
+        void onDescriptionClick(Item item);
     }
 }

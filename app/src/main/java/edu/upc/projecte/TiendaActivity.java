@@ -8,7 +8,6 @@ import android.widget.Toast;
 import android.widget.ProgressBar;
 import android.view.View;
 
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,11 +24,11 @@ public class TiendaActivity extends AppCompatActivity {
 
     private TextView cartCounter;
     private TextView coinCounter;
+    private TextView itemDescription;
     private int cartItemCount = 0;
     private int coinCount = 0;
     private ApiService apiService;
     private ProgressBar progressBar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,7 @@ public class TiendaActivity extends AppCompatActivity {
 
         cartCounter = findViewById(R.id.cart_counter);
         coinCounter = findViewById(R.id.coin_counter);
+        itemDescription = findViewById(R.id.item_description);
         progressBar = findViewById(R.id.progressBar);
         Button buttonLogout = findViewById(R.id.button_logout);
 
@@ -63,11 +63,10 @@ public class TiendaActivity extends AppCompatActivity {
             public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Item> itemList = response.body();
-                    ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this::addToCart, TiendaActivity.this);
+                    ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this::addToCart, TiendaActivity.this::showDescription, TiendaActivity.this);
                     RecyclerView recyclerView = findViewById(R.id.recycler_view);
                     recyclerView.setAdapter(adapter);
                     progressBar.setVisibility(View.GONE);
-
                 } else {
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
@@ -105,5 +104,10 @@ public class TiendaActivity extends AppCompatActivity {
         cartItemCount++;
         cartCounter.setText("🛍️ " + cartItemCount);
         Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showDescription(Item item) {
+        itemDescription.setText(item.getDescription());
+        itemDescription.setVisibility(View.VISIBLE);
     }
 }
