@@ -17,15 +17,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TiendaActivity extends AppCompatActivity {
 
-    private TextView cartCounter;
     private TextView coinCounter;
     private TextView itemDescription;
-    private int cartItemCount = 0;
     private int coinCount = 0;
     private ApiService apiService;
     private ProgressBar progressBar;
@@ -35,7 +31,6 @@ public class TiendaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tienda);
 
-        cartCounter = findViewById(R.id.cart_counter);
         coinCounter = findViewById(R.id.coin_counter);
         itemDescription = findViewById(R.id.item_description);
         progressBar = findViewById(R.id.progressBar);
@@ -57,29 +52,29 @@ public class TiendaActivity extends AppCompatActivity {
     }
 
     private void fetchItems() {
-        progressBar.setVisibility(View.VISIBLE);
-        apiService.getItems().enqueue(new Callback<List<Item>>() {
-            @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Item> itemList = response.body();
-                    ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this::addToCart, TiendaActivity.this::showDescription, TiendaActivity.this);
-                    RecyclerView recyclerView = findViewById(R.id.recycler_view);
-                    recyclerView.setAdapter(adapter);
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Item>> call, Throwable t) {
+    progressBar.setVisibility(View.VISIBLE);
+    apiService.getItems().enqueue(new Callback<List<Item>>() {
+        @Override
+        public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+            if (response.isSuccessful() && response.body() != null) {
+                List<Item> itemList = response.body();
+                ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this);
+                RecyclerView recyclerView = findViewById(R.id.recycler_view);
+                recyclerView.setAdapter(adapter);
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            } else {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
             }
-        });
-    }
+        }
+
+        @Override
+        public void onFailure(Call<List<Item>> call, Throwable t) {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    });
+}
 
     private void fetchUserCoins(String userId) {
         apiService.getUserCoins(userId).enqueue(new Callback<Integer>() {
@@ -100,14 +95,5 @@ public class TiendaActivity extends AppCompatActivity {
         });
     }
 
-    private void addToCart(Item item) {
-        cartItemCount++;
-        cartCounter.setText("🛍️ " + cartItemCount);
-        Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
-    }
 
-    private void showDescription(Item item) {
-        itemDescription.setText(item.getDescription());
-        itemDescription.setVisibility(View.VISIBLE);
-    }
 }
