@@ -9,8 +9,6 @@ import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.EditText;
-import android.widget.ImageView;
-
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,8 +19,6 @@ import androidx.core.view.WindowInsetsCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        if(isUserLoggedIn()) {
+        if (isUserLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, MenuActivity.class);
             startActivity(intent);
             return;
@@ -57,17 +53,14 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
-
         register_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Obrir la AddTrackActivity
                 Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });
 
-        // Configurar el botó d'inici de sessió
         login_button.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString().trim();
             String password = passwordEditText.getText().toString().trim();
@@ -80,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             User user = new User(username, password);
             loginUser(user);
         });
+
 
     }
 
@@ -96,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                     saveUserLoggedIn();
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
                     startActivity(intent);
-                    // Navegar a una altra activitat si cal
                 } else {
                     Toast.makeText(MainActivity.this, "Error d'inici de sessió: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
@@ -122,8 +115,4 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         return sharedPreferences.getBoolean("isLoggedIn", false);
     }
-
-
-
-
 }

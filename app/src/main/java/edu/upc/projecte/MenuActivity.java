@@ -14,6 +14,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MenuActivity extends AppCompatActivity {
 
+    private Button buttonProfile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,19 +36,36 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        buttonProfile = findViewById(R.id.button_profile);
+        if (isUserLoggedIn()) {
+            buttonProfile.setVisibility(View.VISIBLE);
+        }
+
+        buttonProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button buttonLogout = findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear(); // Esborra totes les dades guardades
+                editor.clear(); // Clear all saved data
                 editor.apply();
 
-
-                // Aquí puedes agregar la lógica para cerrar sesión, como limpiar las preferencias compartidas
+                // Add logic to log out, such as clearing shared preferences
                 finish();
             }
         });
+    }
+
+    private boolean isUserLoggedIn() {
+        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+        return sharedPreferences.getBoolean("isLoggedIn", false);
     }
 }
