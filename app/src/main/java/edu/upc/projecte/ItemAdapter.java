@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,8 +36,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         Item item = itemList.get(position);
         holder.itemName.setText(item.getName());
         holder.itemPrice.setText("Price: $" + item.getPrice());
-        // Assuming you have a method to load images
-        // loadImage(holder.itemImage, item.getImageUrl());
+
+        // Set up the quantity spinner
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, getQuantities());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        holder.itemQuantity.setAdapter(adapter);
     }
 
     @Override
@@ -43,16 +48,22 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return itemList.size();
     }
 
+    private List<Integer> getQuantities() {
+        return java.util.Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    }
+
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView itemName;
         TextView itemPrice;
         ImageView itemImage;
+        Spinner itemQuantity;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             itemName = itemView.findViewById(R.id.item_name);
             itemPrice = itemView.findViewById(R.id.item_price);
             itemImage = itemView.findViewById(R.id.item_image);
+            itemQuantity = itemView.findViewById(R.id.item_quantity);
         }
     }
 }
