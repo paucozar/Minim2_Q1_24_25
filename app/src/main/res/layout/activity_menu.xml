@@ -29,6 +29,16 @@
         android:layout_marginTop="16dp"/>
 
     <Button
+    android:id="@+id/btInventario"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Inventario"
+    app:layout_constraintTop_toBottomOf="@id/btTienda"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginTop="16dp"/>
+
+    <Button
         android:id="@+id/button_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -36,6 +36,15 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        Button buttonInventario = findViewById(R.id.btInventario);
+        buttonInventario.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, InventarioActivity.class);
+                startActivity(intent);
+            }
+        });
+
         buttonProfile = findViewById(R.id.button_profile);
         if (isUserLoggedIn()) {
             buttonProfile.setVisibility(View.VISIBLE);

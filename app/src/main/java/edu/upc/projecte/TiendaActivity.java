@@ -25,6 +25,7 @@ public class TiendaActivity extends AppCompatActivity {
     private int coinCount = 0;
     private ApiService apiService;
     private ProgressBar progressBar;
+    private Button buttonComprar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +35,14 @@ public class TiendaActivity extends AppCompatActivity {
         coinCounter = findViewById(R.id.coin_counter);
         itemDescription = findViewById(R.id.item_description);
         progressBar = findViewById(R.id.progressBar);
-        Button buttonLogout = findViewById(R.id.button_logout);
+        buttonComprar = findViewById(R.id.button_comprar);
 
+        buttonComprar.setOnClickListener(v -> {
+            Toast.makeText(TiendaActivity.this, "Comprar button clicked", Toast.LENGTH_SHORT).show();
+            // Add your purchase logic here
+        });
+
+        Button buttonLogout = findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(v -> {
             Intent intent = new Intent(TiendaActivity.this, LoginActivity.class);
             startActivity(intent);
@@ -52,29 +59,29 @@ public class TiendaActivity extends AppCompatActivity {
     }
 
     private void fetchItems() {
-    progressBar.setVisibility(View.VISIBLE);
-    apiService.getItems().enqueue(new Callback<List<Item>>() {
-        @Override
-        public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
-            if (response.isSuccessful() && response.body() != null) {
-                List<Item> itemList = response.body();
-                ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this);
-                RecyclerView recyclerView = findViewById(R.id.recycler_view);
-                recyclerView.setAdapter(adapter);
-                progressBar.setVisibility(View.GONE);
-            } else {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
+        progressBar.setVisibility(View.VISIBLE);
+        apiService.getItems().enqueue(new Callback<List<Item>>() {
+            @Override
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Item> itemList = response.body();
+                    ItemAdapter adapter = new ItemAdapter(itemList, TiendaActivity.this);
+                    RecyclerView recyclerView = findViewById(R.id.recycler_view);
+                    recyclerView.setAdapter(adapter);
+                    progressBar.setVisibility(View.GONE);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(TiendaActivity.this, "Failed to load items", Toast.LENGTH_SHORT).show();
+                }
             }
-        }
 
-        @Override
-        public void onFailure(Call<List<Item>> call, Throwable t) {
-            progressBar.setVisibility(View.GONE);
-            Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    });
-}
+            @Override
+            public void onFailure(Call<List<Item>> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     private void fetchUserCoins(String userId) {
         apiService.getUserCoins(userId).enqueue(new Callback<Integer>() {
@@ -94,6 +101,4 @@ public class TiendaActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

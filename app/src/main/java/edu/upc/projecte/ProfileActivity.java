@@ -8,14 +8,16 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private TextInputEditText usernameText, passwordText, fullNameText, emailText, ageText;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +30,18 @@ public class ProfileActivity extends AppCompatActivity {
         emailText = findViewById(R.id.emailText);
         ageText = findViewById(R.id.ageText);
 
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://localhost:8080/dsaApp/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        apiService = retrofit.create(ApiService.class);
+
         Button buttonSave = findViewById(R.id.button_save);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (updateUserDataInDatabase()) {
-                    Toast.makeText(ProfileActivity.this, "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ProfileActivity.this, "Error, no se ha podido actualizar el perfil", Toast.LENGTH_SHORT).show();
-                }
+                updateUserData();
             }
         });
 
@@ -51,46 +56,34 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private boolean updateUserDataInDatabase() {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
+    private void updateUserData() {
+        User user = new User();
+        user.setUsername(usernameText.getText().toString());
+        user.setPassword(passwordText.getText().toString());
+        user.setFullName(fullNameText.getText().toString());
+        user.setEmail(emailText.getText().toString());
+        user.setAge(Integer.parseInt(ageText.getText().toString()));
+        user.setId(getUserId());
 
-        try {
-            // Connect to the database
-            connection = DriverManager.getConnection("jdbc:mariadb://localhost:8080/dsajuego", "usuario", "contraseña");
-
-            // Create the SQL query to update the user data
-            String sql = "UPDATE user SET username = ?, password = ?, fullName = ?, email = ?, age = ? WHERE id = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, usernameText.getText().toString());
-            preparedStatement.setString(2, passwordText.getText().toString());
-            preparedStatement.setString(3, fullNameText.getText().toString());
-            preparedStatement.setString(4, emailText.getText().toString());
-            preparedStatement.setInt(5, Integer.parseInt(ageText.getText().toString()));
-            preparedStatement.setString(6, getUserId()); // Assume you have a method to get the user ID
-
-            // Execute the update
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            // Check if the update was successful
-            return rowsAffected > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            // Close resources
-            try {
-                if (preparedStatement != null) preparedStatement.close();
-                if (connection != null) connection.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+        Call<Void> call = apiService.updateUser(user);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ProfileActivity.this, "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Error, no se ha podido actualizar el perfil", Toast.LENGTH_SHORT).show();
+                }
             }
-        }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Error, no se ha podido actualizar el perfil", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private String getUserId() {
-        // Implement your logic to get the user ID
-        // For example, you can retrieve it from SharedPreferences or pass it as an Intent extra
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         return sharedPreferences.getString("userId", "defaultUserId");
     }

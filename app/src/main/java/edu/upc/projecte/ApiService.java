@@ -19,4 +19,7 @@ public interface ApiService {
 
     @GET("user/{id}/coins")
     Call<Integer> getUserCoins(@Path("id") String userId);
+
+    @POST("user/update")
+    Call<Void> updateUser(@Body User user);
 }
