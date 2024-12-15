@@ -122,7 +122,7 @@ public class ProfileActivity extends AppCompatActivity {
         editor.putInt("age", user.getAge());
         editor.putString("userId", user.getId());
         editor.apply();
-    }
+    }//
 
     private String getUsername() {
         SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
