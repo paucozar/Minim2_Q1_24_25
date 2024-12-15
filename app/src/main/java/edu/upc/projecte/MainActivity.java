@@ -29,6 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private ProgressBar progressBar;
 
+    private String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
                     saveUserLoggedIn();
+                    setUsername(user.getUsername()); // Llamar a setUsername con el nombre de usuario
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+                    intent.putExtra("username", user.getUsername()); // Pasar el nombre de usuario
                     startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "Error d'inici de sessió: " + response.code(), Toast.LENGTH_SHORT).show();

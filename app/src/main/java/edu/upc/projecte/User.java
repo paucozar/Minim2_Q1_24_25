@@ -8,6 +8,9 @@ public class User {
     private String email;
     private int age;
 
+    private int coins;
+
+
     // Default constructor
     public User() {}
 
@@ -19,6 +22,7 @@ public class User {
         this.fullName = fullName;
         this.email = email;
         this.age = age;
+        this.coins = 0;
     }
 
     // Constructor with username and password
@@ -70,6 +74,14 @@ public class User {
 
     public int getAge() {
         return age;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
     }
 
     public void setAge(int age) {

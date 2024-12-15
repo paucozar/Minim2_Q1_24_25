@@ -32,6 +32,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, TiendaActivity.class);
+                intent.putExtra("username", getIntent().getStringExtra("username")); // Pass the username to the next activity
                 startActivity(intent);
             }
         });

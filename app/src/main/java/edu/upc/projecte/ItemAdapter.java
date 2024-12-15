@@ -18,6 +18,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     private List<Item> itemList;
     private Context context;
+    private RecyclerView recyclerView;
 
     public ItemAdapter(List<Item> itemList, Context context) {
         this.itemList = itemList;
@@ -52,6 +53,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         return java.util.Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
     }
 
+
+
+    public Item[] getItemList() {
+        return itemList.toArray(new Item[0]);
+    }
+
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         TextView itemName;
         TextView itemPrice;
@@ -66,4 +73,18 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             itemQuantity = itemView.findViewById(R.id.item_quantity);
         }
     }
+
+
+   public double getTotalPrice() {
+    int totalPrice = 0;
+    for (int i = 0; i < getItemCount(); i++) {
+        ItemViewHolder holder = (ItemViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
+        if (holder != null) {
+            int quantity = (int) holder.itemQuantity.getSelectedItem();
+            double price = itemList.get(i).getPrice();
+            totalPrice += quantity * price;
+        }
+    }
+    return totalPrice;
+}
 }

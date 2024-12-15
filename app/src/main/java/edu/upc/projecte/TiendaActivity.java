@@ -27,6 +27,13 @@ public class TiendaActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private Button buttonComprar;
 
+    private String username;
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,10 +44,28 @@ public class TiendaActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         buttonComprar = findViewById(R.id.button_comprar);
 
+
+
         buttonComprar.setOnClickListener(v -> {
-            Toast.makeText(TiendaActivity.this, "Comprar button clicked", Toast.LENGTH_SHORT).show();
-            // Add your purchase logic here
-        });
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        ItemAdapter adapter = (ItemAdapter) recyclerView.getAdapter();
+        if (adapter != null) {
+
+            double totalPrice = 0;
+            for (Item item : adapter.getItemList()) {
+            totalPrice += adapter.getItemCount(); // Assuming each item has a method to get the price
+        }
+
+        if (coinCount >= totalPrice) { // Check if the user has enough coins
+            coinCount -= totalPrice; // Deduct the total cost of the items
+            coinCounter.setText(String.valueOf(coinCount)); // Update the coin counter
+            Toast.makeText(TiendaActivity.this, "Items purchased successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(TiendaActivity.this, "Not enough coins", Toast.LENGTH_SHORT).show();
+        }
+    }
+});
+
 
         Button buttonLogout = findViewById(R.id.button_logout);
         buttonLogout.setOnClickListener(v -> {
@@ -54,8 +79,12 @@ public class TiendaActivity extends AppCompatActivity {
 
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
+        // Obtener el nombre de usuario del Intent
+        String username = getIntent().getStringExtra("username");
+        setUsername(username); // Llamar a setUsername con el nombre de usuario
+
         fetchItems();
-        fetchUserCoins("user_id"); // Reemplaza "user_id" con el ID del usuario actual
+        fetchUserCoins(username); // Reemplaza "user_id" con el ID del usuario actual
     }
 
     private void fetchItems() {
@@ -84,19 +113,19 @@ public class TiendaActivity extends AppCompatActivity {
     }
 
     private void fetchUserCoins(String userId) {
-        apiService.getUserCoins(userId).enqueue(new Callback<Integer>() {
+        Call<User> call = apiService.getUserProfile(userId);
+        call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    coinCount = response.body();
-                    coinCounter.setText("Coins: " + coinCount);
-                } else {
-                    Toast.makeText(TiendaActivity.this, "Failed to load coins", Toast.LENGTH_SHORT).show();
+                    User user = response.body();
+                    coinCount = user.getCoins();
+                    coinCounter.setText(String.valueOf(coinCount));
                 }
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 Toast.makeText(TiendaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
