@@ -4,6 +4,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import java.util.List;
 
@@ -20,6 +21,9 @@ public interface ApiService {
     @GET("user/{id}/coins")
     Call<Integer> getUserCoins(@Path("id") String userId);
 
-    @POST("user/update")
-    Call<Void> updateUser(@Body User user);
+    @PUT("users/{username}/profile")
+    Call<Void> updateUserProfile(@Path("username") String username, @Body User userProfileUpdate);
+
+    @GET("users/{username}/profile")
+    Call<User> getUserProfile(@Path("username") String username);
 }
