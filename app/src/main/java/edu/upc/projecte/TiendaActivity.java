@@ -120,7 +120,7 @@ public class TiendaActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     User user = response.body();
                     coinCount = user.getCoins();
-                    coinCounter.setText(String.valueOf(coinCount));
+                    coinCounter.setText("Coins: "+ String.valueOf(coinCount));
                 }
             }
 
