@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button login_button;
     private Button register_button;
+    private Button buttonFaq;
     private ApiService apiService;
     private EditText usernameEditText;
     private EditText passwordEditText;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         login_button = findViewById(R.id.loginButton);
         register_button = findViewById(R.id.registerButton);
+        buttonFaq = findViewById(R.id.buttonFaq);
         usernameEditText = findViewById(R.id.usernameText);
         passwordEditText = findViewById(R.id.passwordText);
         progressBar = findViewById(R.id.progressBar);
@@ -80,7 +82,13 @@ public class MainActivity extends AppCompatActivity {
             loginUser(user);
         });
 
-
+        buttonFaq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FAQActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void loginUser(User user) {
@@ -94,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
                     saveUserLoggedIn();
-                    setUsername(user.getUsername()); // Llamar a setUsername con el nombre de usuario
+                    setUsername(user.getUsername());
                     Intent intent = new Intent(MainActivity.this, MenuActivity.class);
-                    intent.putExtra("username", user.getUsername()); // Pasar el nombre de usuario
+                    intent.putExtra("username", user.getUsername());
                     startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "Error d'inici de sessió: " + response.code(), Toast.LENGTH_SHORT).show();

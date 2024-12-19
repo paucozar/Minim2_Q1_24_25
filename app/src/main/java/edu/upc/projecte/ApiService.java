@@ -26,5 +26,8 @@ public interface ApiService {
 
     @GET("users/{username}/profile")
     Call<User> getUserProfile(@Path("username") String username);
+
+    @GET("faqs")
+    Call<List<FAQ>> getAllFaqs();
     //
 }
